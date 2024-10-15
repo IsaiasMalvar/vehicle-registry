@@ -24,7 +24,7 @@ public class VehicleServiceImpl implements VehicleService {
     public void deleteById(Integer id) throws Exception {
 
         boolean isDeleted = vehicleRepository.deleteVehicleById(id);
-        if(!isDeleted){
+        if (!isDeleted) {
             throw new Exception();
         }
     }
@@ -32,7 +32,7 @@ public class VehicleServiceImpl implements VehicleService {
     @Override
     public VehicleResponse updateById(Integer id, VehicleRequest vehicleRequest) throws Exception {
         Vehicle vehicle = vehicleRepository.updateVehicleById(requestMapper(vehicleRequest), id);
-        if(vehicle == null) {
+        if (vehicle == null) {
             throw new Exception();
         }
         return responseMapper(vehicle);
@@ -41,26 +41,31 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public VehicleResponse saveVehicle(VehicleRequest vehicleRequest) throws Exception {
-            Vehicle vehicle = vehicleRepository.saveVehicle(requestMapper(vehicleRequest));
-            if(vehicle == null) {
-                throw new Exception("This vehicle has already been registered.");
-            }
-            return responseMapper(vehicle);
+        Vehicle vehicle = vehicleRepository.saveVehicle(requestMapper(vehicleRequest));
+        if (vehicle == null) {
+            throw new Exception("This vehicle has already been registered.");
+        }
+        return responseMapper(vehicle);
     }
 
-    private VehicleResponse responseMapper(Vehicle vehicle){
+    private VehicleResponse responseMapper(Vehicle vehicle) {
         VehicleResponse vehicleResponse = new VehicleResponse();
 
-        vehicleResponse.setId(vehicleResponse.getId());
-        vehicleResponse.setBrand(vehicleResponse.getBrand());
-        vehicleResponse.setModel(vehicleResponse.getModel());
-        vehicleResponse.setMileage(vehicleResponse.getMileage());
-        vehicleResponse.setPrice(vehicleResponse.getPrice());
+        vehicleResponse.setId(vehicle.getId());
+        vehicleResponse.setBrand(vehicle.getBrand());
+        vehicleResponse.setModel(vehicle.getModel());
+        vehicleResponse.setMileage(vehicle.getMileage());
+        vehicleResponse.setPrice(vehicle.getPrice());
+        vehicleResponse.setYear(vehicle.getYear());
+        vehicleResponse.setDescription(vehicle.getDescription());
+        vehicleResponse.setColour(vehicle.getColour());
+        vehicleResponse.setFuelType(vehicle.getFuelType());
+        vehicleResponse.setNumDoors(vehicle.getNumDoors());
 
         return vehicleResponse;
     }
 
-    private Vehicle requestMapper(VehicleRequest request){
+    private Vehicle requestMapper(VehicleRequest request) {
         Vehicle vehicle = new Vehicle();
 
         vehicle.setId(request.getId());
@@ -68,6 +73,11 @@ public class VehicleServiceImpl implements VehicleService {
         vehicle.setModel(request.getModel());
         vehicle.setMileage(request.getMileage());
         vehicle.setPrice(request.getPrice());
+        vehicle.setYear(request.getYear());
+        vehicle.setDescription(request.getDescription());
+        vehicle.setColour(request.getColour());
+        vehicle.setFuelType(request.getFuelType());
+        vehicle.setNumDoors(request.getNumDoors());
 
         return vehicle;
     }
