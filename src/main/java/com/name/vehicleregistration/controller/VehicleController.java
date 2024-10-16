@@ -6,12 +6,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.NoSuchElementException;
 
 @RestController
 @Slf4j
@@ -29,8 +32,11 @@ public class VehicleController {
 
         try{
             return ResponseEntity.ok(vehicleService.getVehicleById(id));
+        } catch (NoSuchElementException e) {
+            log.info(e.getMessage());
+            return  ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
-            return  ResponseEntity.notFound().build();
+            throw new RuntimeException(e);
         }
     }
 
@@ -41,8 +47,10 @@ public class VehicleController {
     public ResponseEntity<?> addVehicle(@RequestBody VehicleRequest vehicleRequest) {
         try{
             return ResponseEntity.ok(vehicleService.saveVehicle(vehicleRequest));
-        } catch ( Exception e) {
-            return ResponseEntity.badRequest().build();
+        } catch ( IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -56,8 +64,10 @@ public class VehicleController {
         try{
             vehicleService.deleteById(id);
             return ResponseEntity.ok().build();
+        } catch (NoSuchElementException e) {
+            return   ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (Exception e) {
-            return  ResponseEntity.notFound().build();
+            throw new RuntimeException(e);
         }
     }
 
@@ -68,8 +78,10 @@ public class VehicleController {
     public ResponseEntity<?> updateVehicleById(@PathVariable Integer id,@RequestBody VehicleRequest vehicleRequest) {
             try {
                 return ResponseEntity.ok(vehicleService.updateById(id, vehicleRequest));
+            } catch (NoSuchElementException e) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
             } catch (Exception e) {
-                return ResponseEntity.notFound().build();
+                throw new RuntimeException(e);
             }
     }
 }

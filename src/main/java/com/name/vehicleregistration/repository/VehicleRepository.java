@@ -7,11 +7,11 @@ import java.util.Optional;
 
 public interface VehicleRepository {
 
-    Vehicle getVehicleById(Integer id);
+    Optional<Vehicle> getVehicleById(Integer id);
 
-    Vehicle saveVehicle(Vehicle vehicle);
+    Optional<Vehicle> saveVehicle(Vehicle vehicle);
 
     boolean deleteVehicleById(Integer id);
 
-    Vehicle updateVehicleById(Vehicle vehicle, Integer id);
+    Optional<Vehicle> updateVehicleById(Vehicle vehicle, Integer id);
 }

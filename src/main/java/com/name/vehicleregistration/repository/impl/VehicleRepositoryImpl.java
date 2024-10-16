@@ -6,23 +6,24 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class VehicleRepositoryImpl implements VehicleRepository {
 
     List<Vehicle> vehiclesList = new ArrayList<>();
 
-    public Vehicle getVehicleById(Integer id) {
-        return vehiclesList.stream().filter(vehicle -> vehicle.getId().equals(id)).findFirst().get();
+    public Optional<Vehicle> getVehicleById(Integer id) {
+        return Optional.of(vehiclesList.stream().filter(vehicle -> vehicle.getId().equals(id)).findFirst().get());
     }
 
-    public Vehicle saveVehicle(Vehicle vehicle) {
+    public Optional<Vehicle> saveVehicle(Vehicle vehicle) {
 
         if (vehiclesList.stream().anyMatch(v -> v.getId().equals(vehicle.getId()))) {
-            return null;
+            return Optional.empty();
         } else {
             vehiclesList.add(vehicle);
-            return vehicle;
+            return Optional.ofNullable(vehicle);
         }
     }
 
@@ -30,14 +31,14 @@ public class VehicleRepositoryImpl implements VehicleRepository {
         return vehiclesList.removeIf(vehicle -> vehicle.getId().equals(id));
     }
 
-    public Vehicle updateVehicleById(Vehicle vehicle, Integer id) {
-        if (getVehicleById(id) == null) {
-            return null;
+    public Optional<Vehicle> updateVehicleById(Vehicle vehicle, Integer id) {
+        if (getVehicleById(id).isEmpty()) {
+            return Optional.empty();
         } else {
             deleteVehicleById(id);
-            Vehicle updatedVehicle = saveVehicle(vehicle);
-            updatedVehicle.setId(id);
-            return updatedVehicle;
+            vehicle.setId(id);
+            saveVehicle(vehicle);
+            return Optional.of(vehicle);
         }
     }
 
