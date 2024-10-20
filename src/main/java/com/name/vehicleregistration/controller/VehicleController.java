@@ -25,12 +25,10 @@ public class VehicleController {
             description = "Devuelve la información detallada de un vehículo basado en el ID proporcionado. Si el vehículo no existe, se retorna un error 404.")
     @GetMapping("/vehicles/{id}")
     public ResponseEntity<?> getVehicleInfoById(@PathVariable Integer id) {
-
-        try{
+        try {
             return ResponseEntity.ok(vehicleService.getVehicleById(id));
         } catch (NoSuchElementException e) {
-           
-            return  ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -44,7 +42,7 @@ public class VehicleController {
         try{
             return ResponseEntity.ok(vehicleService.saveVehicle(vehicleRequest));
         } catch ( IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -56,12 +54,11 @@ public class VehicleController {
     @DeleteMapping("/vehicles/{id}")
     public ResponseEntity<?> deleteVehicleById(@PathVariable Integer id) {
 
-        log.info("Deleting vehicle");
         try{
             vehicleService.deleteById(id);
             return ResponseEntity.ok().build();
         } catch (NoSuchElementException e) {
-            return   ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return   ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -75,7 +72,7 @@ public class VehicleController {
             try {
                 return ResponseEntity.ok(vehicleService.updateById(id, vehicleRequest));
             } catch (NoSuchElementException e) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

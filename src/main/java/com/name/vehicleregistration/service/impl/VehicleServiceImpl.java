@@ -20,33 +20,45 @@ public class VehicleServiceImpl implements VehicleService {
 
     @Override
     public VehicleResponse getVehicleById(Integer id) throws NoSuchElementException {
-        Vehicle vehicle = vehicleRepository.getVehicleById(id).orElseThrow(NoSuchElementException::new);
+        Vehicle vehicle = vehicleRepository.getVehicleById(id)
+                .orElseThrow(() -> {
+                    String error = "No se encontró ningún vehículo con el ID: " + id;
+                    return new NoSuchElementException(error);
+                });
         return this.responseMapper(vehicle);
     }
 
     @Override
     public void deleteById(Integer id) throws NoSuchElementException {
-
         boolean isDeleted = vehicleRepository.deleteVehicleById(id);
         if (!isDeleted) {
-            throw new NoSuchElementException();
+            throw new NoSuchElementException("No se pudo eliminar el vehículo con el ID: " + id + " porque no existe.");
         }
     }
 
     @Override
     public VehicleResponse updateById(Integer id, VehicleRequest vehicleRequest) throws NoSuchElementException {
         Vehicle vehicle = vehicleRepository.updateVehicleById(requestMapper(vehicleRequest), id)
-                .orElseThrow(NoSuchElementException::new);
+                .orElseThrow(() -> {
+                    String error = "No se pudo actualizar el vehículo con el ID: " + id + ". No se encontró.";
+                    return new NoSuchElementException(error);
+                });
+        if (vehicle == null) {
+            throw new NoSuchElementException("No se pudo actualizar el vehículo con el ID: " + id + ". No se encontró.");
+        }
+
         return responseMapper(vehicle);
     }
 
     @Override
     public VehicleResponse saveVehicle(VehicleRequest vehicleRequest) throws IllegalArgumentException {
         Vehicle vehicle = vehicleRepository.saveVehicle(requestMapper(vehicleRequest))
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> {
+                    String error = "No se pudo guardar el vehículo. Verifique los datos proporcionados.";
+                    return new IllegalArgumentException(error);
+                });
         return responseMapper(vehicle);
     }
-
 
     private VehicleResponse responseMapper(Vehicle vehicle) {
         VehicleResponse vehicleResponse = new VehicleResponse();
